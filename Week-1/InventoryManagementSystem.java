@@ -1,3 +1,19 @@
+/*
+Theory Questions :
+        ◦ Explain why data structures and algorithms are essential in handling large inventories.
+        ◦ Discuss the types of data structures suitable for this problem.
+
+Answers :
+1.  Performance can be Optimized
+    Efficient Memory management can be done
+    Scalability can be achieved
+
+2.  HashMap
+    ArrayList
+    ( I have used HashMap but List can also be used )
+ */
+
+
 import java.util.*;
 
 class Product {
@@ -168,5 +184,6 @@ public class InventoryManagementSystem {
             }
 
         }
+        sc.close();
     }
 }
