@@ -1,11 +1,26 @@
 package com.library.service;
+import com.library.repository.BookRepository;
 
 public class BookService {
-    public boolean isBookServiceAvailable(){
-        return true;
+    BookRepository bookRepository;
+    public BookService(){
+        System.out.println("Book Service is Running");
+    }
+
+    public BookRepository getBookRepository() {
+        return bookRepository;
+    }
+
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    public void start(){
+        System.out.println("Book Service started by Book Repository");
     }
 
     public void run(){
-        System.out.println("Running Book Service");
+
+        bookRepository.start();
     }
 }

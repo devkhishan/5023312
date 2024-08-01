@@ -18,7 +18,7 @@ public class App
         BookRepository bookRepository = context.getBean(BookRepository.class);
         BookService bookService = context.getBean(BookService.class);
 
-        System.out.println(bookRepository.isBookAvailable());
+        bookRepository.run();
         bookService.run();
 
 
