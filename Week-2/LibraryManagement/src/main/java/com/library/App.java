@@ -4,12 +4,9 @@ import com.library.repository.BookRepository;
 import com.library.service.BookService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import java.awt.print.Book;
 
-/**
- * Hello world!
- *
- */
+
+
 public class App 
 {
     public static void main( String[] args )
@@ -19,6 +16,7 @@ public class App
         BookService bookService = context.getBean(BookService.class);
 
         bookRepository.run();
+        System.out.println();
         bookService.run();
 
 
