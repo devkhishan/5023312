@@ -15,7 +15,8 @@ public class LoggingAspect{
     @Before("execution(* com.library..*(..))")
     public void startLog(JoinPoint joinPoint){
         startTime = System.currentTimeMillis();
-        System.out.println("Starting Execution : "+joinPoint.getSignature());
+//        System.out.println("Starting Execution : "+joinPoint.getSignature());
+        System.out.println("Before Method : "+joinPoint.getSignature().getName());
     }
 
 
@@ -23,7 +24,8 @@ public class LoggingAspect{
     public void endLog(JoinPoint joinPoint){
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
-        System.out.println("Ending Execution : "+joinPoint.getSignature());
-        System.out.println("Total Execution : "+executionTime);
+//        System.out.println("Ending Execution : "+joinPoint.getSignature());
+//        System.out.println("Total Execution : "+executionTime);
+        System.out.println("After Method : "+joinPoint.getSignature().getName());
     }
 }
