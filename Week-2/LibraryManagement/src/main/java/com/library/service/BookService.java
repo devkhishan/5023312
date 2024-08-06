@@ -10,6 +10,10 @@ public class BookService {
         System.out.println("Book Service is Running");
     }
 
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
     public BookRepository getBookRepository() {
         return bookRepository;
     }
@@ -21,6 +25,10 @@ public class BookService {
 
     public void start(){
         System.out.println("Book Service started by Book Repository");
+    }
+
+    public void check(){
+        System.out.println("Book Service is running");
     }
 
     public void run(){

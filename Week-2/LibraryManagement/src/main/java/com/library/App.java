@@ -13,11 +13,12 @@ public class App
     {
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
         BookRepository bookRepository = context.getBean(BookRepository.class);
-        BookService bookService = context.getBean(BookService.class);
+        BookService bookService = (BookService) context.getBean("bookService");
+        BookService bookServiceSetter = (BookService) context.getBean("bookServiceSetter");
 
-        bookRepository.run();
+        bookService.check();
         System.out.println();
-        bookService.run();
+        bookServiceSetter.check();
 
 
     }

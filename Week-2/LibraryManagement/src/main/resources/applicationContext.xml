@@ -16,9 +16,12 @@
     </bean>
 
     <bean id="bookService" class="com.library.service.BookService">
-        <property name="bookRepository" ref="bookRepository" />
+        <constructor-arg ref="bookRepository" />
     </bean>
 
+    <bean id="bookServiceSetter" class="com.library.service.BookService">
+        <property name="bookRepository" ref="bookRepository" />
+    </bean>
     <aop:aspectj-autoproxy/>
 
 
