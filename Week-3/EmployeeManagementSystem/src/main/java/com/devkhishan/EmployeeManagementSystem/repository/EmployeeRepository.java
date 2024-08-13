@@ -1,6 +1,8 @@
 package com.devkhishan.EmployeeManagementSystem.repository;
 
 import com.devkhishan.EmployeeManagementSystem.model.Employee;
+import com.devkhishan.EmployeeManagementSystem.projections.EmployeeProjection;
+import com.devkhishan.EmployeeManagementSystem.projections.EmployeeProjectionClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByDepartmentName(@Param("departmentName") String departmentName);
 
     Page<Employee> findAll(Pageable pageable);
+
+
+    @Query("SELECT new com.devkhishan.EmployeeManagementSystem.projections.EmployeeProjectionClass(e.id, e.name) FROM Employee e")
+    List<EmployeeProjectionClass> findEmployeeProjections();
 }
