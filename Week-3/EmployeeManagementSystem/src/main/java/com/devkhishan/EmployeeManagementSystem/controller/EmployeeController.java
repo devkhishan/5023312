@@ -4,6 +4,10 @@ import com.devkhishan.EmployeeManagementSystem.model.Employee;
 import com.devkhishan.EmployeeManagementSystem.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +21,14 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+
     @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    public Page<Employee> getEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String[] sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return employeeService.getAllEmployees(pageable);
     }
 
     @GetMapping("/{id}")

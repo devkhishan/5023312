@@ -4,6 +4,8 @@ import com.devkhishan.EmployeeManagementSystem.model.Employee;
 import com.devkhishan.EmployeeManagementSystem.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,6 +15,10 @@ public class EmployeeService {
 
     @Autowired
     EmployeeRepository employeeRepository;
+
+    public Page<Employee> getAllEmployees(Pageable pageable) {
+        return employeeRepository.findAll(pageable);
+    }
 
     // Get all employees
     public List<Employee> getAllEmployees() {
