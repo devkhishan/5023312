@@ -20,7 +20,7 @@ public class Employee {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
     private Department department;
 }
