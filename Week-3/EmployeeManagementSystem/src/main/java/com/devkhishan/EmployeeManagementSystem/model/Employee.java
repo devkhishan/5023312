@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "employees")
 @Data
 @NoArgsConstructor
+@NamedQueries({
+        @NamedQuery(name = "Employee.findByEmail",
+                query = "SELECT e FROM Employee e WHERE e.email = :email"),
+        @NamedQuery(name = "Employee.findByDepartmentName",
+                query = "SELECT e FROM Employee e WHERE e.department.name = :departmentName")
+})
 public class Employee {
 
     @Id
