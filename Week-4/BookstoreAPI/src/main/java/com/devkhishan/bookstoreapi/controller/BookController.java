@@ -1,9 +1,11 @@
 package com.devkhishan.bookstoreapi.controller;
 
+import com.devkhishan.bookstoreapi.dto.BookDTO;
 import com.devkhishan.bookstoreapi.exception.ResourceNotFoundException;
 import com.devkhishan.bookstoreapi.model.Book;
 
 import com.devkhishan.bookstoreapi.service.BookService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,11 +48,9 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Book book){
-        Book createdBook = bookService.createBook(book);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Customer-Header","BookCreated");
-        return new ResponseEntity<>(createdBook, headers, HttpStatus.CREATED);
+    public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO){
+        BookDTO createdBook = bookService.createBook(bookDTO);
+        return ResponseEntity.ok(createdBook);
     }
 
     @PutMapping("/{id}")

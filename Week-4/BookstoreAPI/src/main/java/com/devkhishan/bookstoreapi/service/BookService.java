@@ -1,5 +1,7 @@
 package com.devkhishan.bookstoreapi.service;
 
+import com.devkhishan.bookstoreapi.dto.BookDTO;
+import com.devkhishan.bookstoreapi.mapper.BookMapper;
 import com.devkhishan.bookstoreapi.model.Book;
 import com.devkhishan.bookstoreapi.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,13 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+    private final BookMapper bookMapper = BookMapper.INSTANCE;
+
+    public BookDTO createBook(BookDTO bookDTO){
+        Book book = bookMapper.bookDTOToBook(bookDTO);
+        Book savedBook = bookRepository.save(book);
+        return bookMapper.bookToBookDTO(savedBook);
+    }
 
     public List<Book> getAllBooks(){
         return bookRepository.findAll();
@@ -23,9 +32,7 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public Book createBook(Book book){
-        return bookRepository.save(book);
-    }
+
 
     public Optional<Book> updateBook(Long id, Book updatedBook){
         if(bookRepository.existsById(id)){
