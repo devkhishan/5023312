@@ -1,5 +1,6 @@
 package com.devkhishan.bookstoreapi.controller;
 
+import com.devkhishan.bookstoreapi.exception.ResourceNotFoundException;
 import com.devkhishan.bookstoreapi.model.Book;
 
 import com.devkhishan.bookstoreapi.service.BookService;
@@ -23,8 +24,14 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id){
         Optional<Book> book = bookService.getBookById(id);
-        return book.map(b -> ResponseEntity.ok().header("Custom-Header","BookFetched").body(b))
-                .orElse(ResponseEntity.notFound().build());
+        if(book.isPresent()) {
+            return ResponseEntity.ok(book.get());
+        }
+        else {
+            throw new ResourceNotFoundException("Book with id "+id+" not found.");
+        }
+//        return book.map(b -> ResponseEntity.ok().header("Custom-Header","BookFetched").body(b))
+//                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
