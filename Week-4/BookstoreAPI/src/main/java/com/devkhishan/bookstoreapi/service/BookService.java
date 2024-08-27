@@ -5,7 +5,6 @@ import com.devkhishan.bookstoreapi.mapper.BookMapper;
 import com.devkhishan.bookstoreapi.model.Book;
 import com.devkhishan.bookstoreapi.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,39 +16,53 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-
     private final BookMapper bookMapper = BookMapper.INSTANCE;
 
-    public BookDTO createBook(BookDTO bookDTO){
+    // Create a new book
+    public BookDTO createBook(BookDTO bookDTO) {
         Book book = bookMapper.bookDTOToBook(bookDTO);
         Book savedBook = bookRepository.save(book);
         return bookMapper.bookToBookDTO(savedBook);
     }
 
-    public List<Book> getAllBooks(){
-        return bookRepository.findAll();
+    // Get all books
+    public List<BookDTO> getAllBooks() {
+        return bookRepository.findAll().stream()
+                .map(bookMapper::bookToBookDTO)
+                .toList();
     }
 
-    public Optional<Book> getBookById(Long id){
-        return bookRepository.findById(id);
+    // Get a book by ID
+    public Optional<BookDTO> getBookDTOById(Long id) {
+        return bookRepository.findById(id)
+                .map(bookMapper::bookToBookDTO);
     }
 
+    // Update an existing book
+    public Optional<BookDTO> updateBook(Long id, BookDTO updatedBookDTO) {
+        Optional<Book> existingBookOptional = bookRepository.findById(id);
+        if (existingBookOptional.isPresent()) {
+            Book existingBook = existingBookOptional.get();
 
+            // Map fields from DTO to entity
+            existingBook.setTitle(updatedBookDTO.getTitle());
+            existingBook.setAuthor(updatedBookDTO.getAuthor());
+            existingBook.setPrice(updatedBookDTO.getPrice());
+            existingBook.setIsbn(updatedBookDTO.getIsbn());
 
-    public Optional<Book> updateBook(Long id, Book updatedBook){
-        if(bookRepository.existsById(id)){
-            updatedBook.setId(id);
-            return Optional.of(bookRepository.save(updatedBook));
+            Book updatedBook = bookRepository.save(existingBook);
+            return Optional.of(bookMapper.bookToBookDTO(updatedBook));
         }
         return Optional.empty();
     }
 
-    public boolean deleteBook(Long id){
-        if (bookRepository.existsById(id)){
+
+    // Delete a book by ID
+    public boolean deleteBook(Long id) {
+        if (bookRepository.existsById(id)) {
             bookRepository.deleteById(id);
             return true;
         }
         return false;
     }
-
 }

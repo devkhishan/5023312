@@ -9,13 +9,13 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import org.springframework.hateoas.RepresentationModel;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookDTO {
+public class BookDTO extends RepresentationModel<BookDTO> {
     private Long id;
 
 

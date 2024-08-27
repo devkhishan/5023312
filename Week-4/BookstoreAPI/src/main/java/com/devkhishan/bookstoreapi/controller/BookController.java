@@ -1,21 +1,18 @@
 package com.devkhishan.bookstoreapi.controller;
 
+import com.devkhishan.bookstoreapi.assembler.BookResourceAssembler;
 import com.devkhishan.bookstoreapi.dto.BookDTO;
-import com.devkhishan.bookstoreapi.exception.ResourceNotFoundException;
-import com.devkhishan.bookstoreapi.model.Book;
-
 import com.devkhishan.bookstoreapi.service.BookService;
-import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/books")
@@ -24,46 +21,52 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @PostMapping
-    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO bookDTO){
-        BookDTO createdBook = bookService.createBook(bookDTO);
-        return ResponseEntity.ok(createdBook);
-    }
+    @Autowired
+    private BookResourceAssembler bookResourceAssembler;
 
-    @GetMapping
-    public ResponseEntity<List<Book>> getBooks(
-            @RequestParam(required=false) String title,
-            @RequestParam(required=false) String author ){
-        List<Book> filteredBooks = bookService.getAllBooks().stream()
-                .filter(book -> (title == null || book.getTitle().equalsIgnoreCase(title)) &&
-                        (author == null || book.getAuthor().equalsIgnoreCase(author)))
-                .toList();
-        return ResponseEntity.ok().header("Custom-Header","BooksFiltered").body(filteredBooks);
+    @PostMapping
+    public ResponseEntity<EntityModel<BookDTO>> createBook(@RequestBody BookDTO bookDTO) {
+        BookDTO createdBook = bookService.createBook(bookDTO);
+        EntityModel<BookDTO> bookResource = bookResourceAssembler.toModel(createdBook);
+        return ResponseEntity
+                .created(linkTo(methodOn(BookController.class).getBookById(createdBook.getId())).toUri())
+                .body(bookResource);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@Valid @PathVariable Long id){
-        Optional<Book> book = bookService.getBookById(id);
-        if(book.isPresent()) {
-            return ResponseEntity.ok(book.get());
+    public ResponseEntity<EntityModel<BookDTO>> getBookById(@PathVariable Long id) {
+        Optional<BookDTO> bookDTO = bookService.getBookDTOById(id);
+        if (bookDTO.isPresent()) {
+            EntityModel<BookDTO> bookResource = bookResourceAssembler.toModel(bookDTO.get());
+            return ResponseEntity.ok(bookResource);
         }
-        else {
-            throw new ResourceNotFoundException("Book with id "+id+" not found.");
-        }
+        return ResponseEntity.notFound().build();
     }
 
+    @GetMapping
+    public ResponseEntity<List<EntityModel<BookDTO>>> getAllBooks() {
+        List<BookDTO> books = bookService.getAllBooks();
+        List<EntityModel<BookDTO>> bookResources = books.stream()
+                .map(bookResourceAssembler::toModel)
+                .toList();
+        return ResponseEntity.ok(bookResources);
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook){
-        Optional<Book> updated = bookService.updateBook(id, updatedBook);
-        return updated.map(book -> ResponseEntity.ok().header("Custom-Header","BookUpdated").body(book))
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<EntityModel<BookDTO>> updateBook(@PathVariable Long id, @RequestBody BookDTO updatedBookDTO) {
+        Optional<BookDTO> bookDTO = bookService.updateBook(id, updatedBookDTO);
+        if (bookDTO.isPresent()) {
+            EntityModel<BookDTO> bookResource = bookResourceAssembler.toModel(bookDTO.get());
+            return ResponseEntity.ok(bookResource);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@Valid @PathVariable Long id){
-        return bookService.deleteBook(id) ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        if (bookService.deleteBook(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
-
 }
