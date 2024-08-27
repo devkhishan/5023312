@@ -1,9 +1,6 @@
 package com.devkhishan.bookstoreapi.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,4 +19,7 @@ public class Book {
     private String author;
     private Double price;
     private String isbn;
+
+    @Version
+    private Integer version;
 }

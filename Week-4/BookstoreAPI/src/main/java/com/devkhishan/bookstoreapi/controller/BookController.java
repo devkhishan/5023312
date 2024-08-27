@@ -5,6 +5,7 @@ import com.devkhishan.bookstoreapi.exception.ResourceNotFoundException;
 import com.devkhishan.bookstoreapi.model.Book;
 
 import com.devkhishan.bookstoreapi.service.BookService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,17 +24,10 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id){
-        Optional<Book> book = bookService.getBookById(id);
-        if(book.isPresent()) {
-            return ResponseEntity.ok(book.get());
-        }
-        else {
-            throw new ResourceNotFoundException("Book with id "+id+" not found.");
-        }
-//        return book.map(b -> ResponseEntity.ok().header("Custom-Header","BookFetched").body(b))
-//                .orElse(ResponseEntity.notFound().build());
+    @PostMapping
+    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO bookDTO){
+        BookDTO createdBook = bookService.createBook(bookDTO);
+        return ResponseEntity.ok(createdBook);
     }
 
     @GetMapping
@@ -47,11 +41,17 @@ public class BookController {
         return ResponseEntity.ok().header("Custom-Header","BooksFiltered").body(filteredBooks);
     }
 
-    @PostMapping
-    public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO){
-        BookDTO createdBook = bookService.createBook(bookDTO);
-        return ResponseEntity.ok(createdBook);
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@Valid @PathVariable Long id){
+        Optional<Book> book = bookService.getBookById(id);
+        if(book.isPresent()) {
+            return ResponseEntity.ok(book.get());
+        }
+        else {
+            throw new ResourceNotFoundException("Book with id "+id+" not found.");
+        }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook){
@@ -61,7 +61,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id){
+    public ResponseEntity<Void> deleteBook(@Valid @PathVariable Long id){
         return bookService.deleteBook(id) ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
